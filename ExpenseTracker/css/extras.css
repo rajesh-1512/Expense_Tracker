@@ -1,0 +1,90 @@
+/* Navigation & Layout Enhancements */
+
+/* Navbar */
+.navbar {
+    background: rgba(67, 97, 238, 0.95) !important;
+    backdrop-filter: blur(10px);
+}
+
+.nav-link {
+    color: rgba(255, 255, 255, 0.8) !important;
+    font-weight: 500;
+    transition: all 0.2s;
+    border-radius: 8px;
+    padding: 8px 16px !important;
+}
+
+.nav-link:hover {
+    color: #fff !important;
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.nav-link.active {
+    color: #fff !important;
+    background: rgba(255, 255, 255, 0.2);
+    font-weight: 600;
+}
+
+/* Page Headers */
+.page-header {
+    margin-bottom: 2rem;
+}
+
+.page-title {
+    font-weight: 700;
+    color: #2b2d42;
+}
+
+/* Settings Form */
+.settings-card {
+    border-radius: 15px;
+    overflow: hidden;
+}
+
+.settings-section {
+    padding: 2rem;
+    border-bottom: 1px solid #eee;
+}
+
+.settings-section:last-child {
+    border-bottom: none;
+}
+
+/* Budget Progress Bars */
+.budget-item {
+    background: #fff;
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 1rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    transition: transform 0.2s;
+}
+
+.budget-item:hover {
+    transform: translateY(-2px);
+}
+
+.progress {
+    height: 10px;
+    border-radius: 5px;
+    background-color: #e9ecef;
+}
+
+/* Analysis Charts */
+.chart-container {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 15px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+    margin-bottom: 2rem;
+    height: 400px;
+}
+
+/* Mobile Responsive */
+@media (max-width: 991px) {
+    .navbar-collapse {
+        background: var(--primary-color);
+        padding: 1rem;
+        border-radius: 0 0 15px 15px;
+    }
+}

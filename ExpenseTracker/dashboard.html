@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SmartPocket - Dashboard</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/style.css">
+    <!-- Markdown Parser for AI responses -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+</head>
+
+<body class="dashboard-body">
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary shadow-sm glass-header sticky-top">
+        <div class="container">
+            <a class="navbar-brand fw-bold" href="dashboard.html">
+                <i class="fa-solid fa-wallet me-2"></i>SmartPocket
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item"><a class="nav-link active" href="dashboard.html">Dashboard</a></li>
+                    <li class="nav-item"><a class="nav-link" href="mentor.html">AI Mentor</a></li>
+                    <li class="nav-item"><a class="nav-link" href="budget.html">Budgets</a></li>
+                    <li class="nav-item"><a class="nav-link" href="myexpense.html">MyExpense</a></li>
+                    <li class="nav-item"><a class="nav-link" href="analysis.html">Analysis</a></li>
+                    <li class="nav-item"><a class="nav-link" href="settings.html">Settings</a></li>
+                </ul>
+                <div class="d-flex align-items-center">
+                    <span id="user-display-name" class="text-white me-3 fw-medium">User</span>
+                    <button id="logout-btn" class="btn btn-outline-light btn-sm rounded-pill px-3">
+                        <i class="fa-solid fa-sign-out-alt me-1"></i> Logout
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container py-4">
+        <!-- Summary Cards -->
+        <div class="row g-3 mb-4">
+            <div class="col-md-3">
+                <div class="card summary-card border-0 shadow-sm bg-success text-white">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <h6 class="card-title mb-1">Total Income</h6>
+                                <h3 class="fw-bold mb-0" id="total-income">...</h3>
+                            </div>
+                            <div class="icon-circle bg-white text-success">
+                                <i class="fa-solid fa-arrow-up"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card summary-card border-0 shadow-sm bg-danger text-white">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <h6 class="card-title mb-1">Total Expenses</h6>
+                                <h3 class="fw-bold mb-0" id="total-expense">...</h3>
+                            </div>
+                            <div class="icon-circle bg-white text-danger">
+                                <i class="fa-solid fa-arrow-down"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card summary-card border-0 shadow-sm bg-primary text-white">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <h6 class="card-title mb-1">Balance</h6>
+                                <h3 class="fw-bold mb-0" id="balance">...</h3>
+                            </div>
+                            <div class="icon-circle bg-white text-primary">
+                                <i class="fa-solid fa-wallet"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card summary-card border-0 shadow-sm bg-info text-dark">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <h6 class="card-title mb-1">Savings Rate</h6>
+                                <h3 class="fw-bold mb-0" id="savings-rate">0%</h3>
+                            </div>
+                            <div class="icon-circle bg-white text-info">
+                                <i class="fa-solid fa-piggy-bank"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row g-4">
+            <!-- Left Column: inputs & transactions -->
+            <div class="col-lg-7">
+
+                <!-- Add Transaction -->
+                <div class="card border-0 shadow-sm mb-4">
+                    <div class="card-header bg-white border-bottom-0 py-3">
+                        <h5 class="fw-bold mb-0 text-primary"><i class="fa-solid fa-plus-circle me-2"></i>Add
+                            Transaction</h5>
+                    </div>
+                    <div class="card-body">
+                        <form id="transaction-form" class="row g-3">
+                            <div class="col-md-4">
+                                <label class="form-label small text-muted">Type</label>
+                                <select class="form-select" id="type" required>
+                                    <option value="expense" selected>Expense</option>
+                                    <option value="income">Income</option>
+                                </select>
+                            </div>
+                            <div class="col-md-8">
+                                <label class="form-label small text-muted">Title/Description</label>
+                                <input type="text" class="form-control" id="description"
+                                    placeholder="e.g. Grocery, Salary" required>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label small text-muted">Amount</label>
+                                <input type="number" class="form-control" id="amount" placeholder="0.00" min="0.01"
+                                    step="0.01" required>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label small text-muted">Category</label>
+                                <select class="form-select" id="category" required>
+                                    <option value="Food">Food</option>
+                                    <option value="Transport">Transport</option>
+                                    <option value="Utilities">Utilities</option>
+                                    <option value="Entertainment">Entertainment</option>
+                                    <option value="Shopping">Shopping</option>
+                                    <option value="Health">Health</option>
+                                    <option value="Health">Sports</option>
+                                    <option value="Salary">Salary (Income)</option>
+                                    <option value="Other">Other</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label small text-muted">Date</label>
+                                <input type="date" class="form-control" id="date" required>
+                            </div>
+                            <div class="col-12 text-end">
+                                <button type="submit" class="btn btn-primary px-4"><i class="fa-solid fa-save me-1"></i>
+                                    Save Record</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Recent Transactions -->
+                <div class="card border-0 shadow-sm mb-4">
+                    <div
+                        class="card-header bg-white border-bottom-0 py-3 d-flex justify-content-between align-items-center">
+                        <h5 class="fw-bold mb-0 text-secondary"><i class="fa-solid fa-list me-2"></i>Recent Transactions
+                        </h5>
+                        <button class="btn btn-sm btn-outline-danger" id="clear-all-btn">Clear All</button>
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table table-hover align-middle mb-0">
+                                <thead class="bg-light">
+                                    <tr>
+                                        <th class="ps-4">Date</th>
+                                        <th>Description</th>
+                                        <th>Category</th>
+                                        <th>Amount</th>
+                                        <th class="text-end pe-4">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="transaction-list">
+                                    <!-- Populated by JS -->
+                                    <tr>
+                                        <td colspan="5" class="text-center py-4 text-muted">Loading transactions...</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Right Column: Charts & AI Teaser -->
+            <div class="col-lg-5">
+
+                <!-- AI Teaser Card -->
+                <div
+                    class="card border-0 shadow-sm mb-4 bg-gradient-premium text-white position-relative overflow-hidden">
+                    <div class="card-body p-4 d-flex justify-content-between align-items-center position-relative"
+                        style="z-index: 1;">
+                        <div>
+                            <h4 class="fw-bold mb-1">Need Advice?</h4>
+                            <p class="mb-3 opacity-75">Your AI Financial Mentor is ready to help.</p>
+                            <a href="mentor.html"
+                                class="btn btn-light text-primary fw-bold rounded-pill px-4 shadow-sm">
+                                <i class="fa-solid fa-comments me-2"></i>Chat Now
+                            </a>
+                        </div>
+                        <i class="fa-solid fa-brain fa-5x opacity-25 animate-float"></i>
+                    </div>
+                </div>
+
+                <!-- Chart Section (Moved here) -->
+                <div class="card border-0 shadow-sm">
+                    <div class="card-header bg-white border-bottom-0 py-3">
+                        <h5 class="fw-bold mb-0 text-secondary"><i class="fa-solid fa-chart-pie me-2"></i>Expense
+                            Breakdown</h5>
+                    </div>
+                    <div class="card-body d-flex justify-content-center">
+                        <div style="width: 100%; height: 300px;">
+                            <canvas id="expenseChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+
+    <!-- Custom Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="js/firebase-config.js"></script>
+    <script src="js/config.js"></script>
+    <script src="js/common.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/charts.js"></script>
+    <script src="js/ai-mentor.js"></script>
+    <script src="js/app.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SmartPocket - MyExpense</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body class="dashboard-body">
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary shadow-sm glass-header sticky-top">
+        <div class="container">
+            <a class="navbar-brand fw-bold" href="dashboard.html">
+                <i class="fa-solid fa-wallet me-2"></i>SmartPocket
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item"><a class="nav-link" href="dashboard.html">Dashboard</a></li>
+                    <li class="nav-item"><a class="nav-link" href="mentor.html">AI Mentor</a></li>
+                    <li class="nav-item"><a class="nav-link" href="budget.html">Budgets</a></li>
+                    <li class="nav-item"><a class="nav-link active" href="myexpense.html">MyExpense</a></li>
+                    <li class="nav-item"><a class="nav-link" href="analysis.html">Analysis</a></li>
+                    <li class="nav-item"><a class="nav-link" href="settings.html">Settings</a></li>
+                </ul>
+                <div class="d-flex align-items-center">
+                    <span id="user-display-name" class="text-white me-3 fw-medium">User</span>
+                    <button id="logout-btn" class="btn btn-outline-light btn-sm rounded-pill px-3">
+                        <i class="fa-solid fa-sign-out-alt me-1"></i> Logout
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container py-4">
+        <div class="d-flex justify-content-between align-items-center page-header">
+            <div>
+                <h2 class="page-title mb-0">My Recurring Expenses</h2>
+                <p class="text-muted mb-0">Manage your predefined recurring expenses like rent, gym, subscriptions.</p>
+            </div>
+            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addRecurringModal">
+                <i class="fa-solid fa-plus me-2"></i>Add Recurring Expense
+            </button>
+        </div>
+
+        <!-- Summary Cards Row -->
+        <div class="row mb-4">
+            <div class="col-md-4">
+                <div class="card border-0 shadow-sm h-100 bg-gradient-warning text-white">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h6 class="mb-0 opacity-75">Weekly Recurring</h6>
+                            <i class="fa-solid fa-calendar-week opacity-50"></i>
+                        </div>
+                        <h3 class="fw-bold mb-1" id="weekly-recurring-total">...</h3>
+                        <small class="opacity-75" id="weekly-recurring-count">0 expenses</small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card border-0 shadow-sm h-100 bg-gradient-danger text-white">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h6 class="mb-0 opacity-75">Monthly Recurring</h6>
+                            <i class="fa-solid fa-calendar-days opacity-50"></i>
+                        </div>
+                        <h3 class="fw-bold mb-1" id="monthly-recurring-total">...</h3>
+                        <small class="opacity-75" id="monthly-recurring-count">0 expenses</small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card border-0 shadow-sm h-100 bg-gradient-primary text-white">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h6 class="mb-0 opacity-75">Yearly Recurring</h6>
+                            <i class="fa-solid fa-calendar opacity-50"></i>
+                        </div>
+                        <h3 class="fw-bold mb-1" id="yearly-recurring-total">...</h3>
+                        <small class="opacity-75" id="yearly-recurring-count">0 expenses</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section Header -->
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h5 class="fw-bold text-secondary"><i class="fa-solid fa-repeat me-2"></i>All Recurring Expenses</h5>
+            <button class="btn btn-outline-danger btn-sm" onclick="clearAllRecurring()">
+                <i class="fa-solid fa-trash-can me-2"></i>Clear All
+            </button>
+        </div>
+
+        <!-- Recurring Expenses List -->
+        <div class="row">
+            <div class="col-12">
+                <div id="recurring-list">
+                    <!-- Loaded dynamically -->
+                    <div class="text-center py-5 text-muted">
+                        <i class="fa-solid fa-spinner fa-spin fa-2x mb-3"></i>
+                        <p>Loading Recurring Expenses...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Recurring Expense Modal -->
+    <div class="modal fade" id="addRecurringModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Add Recurring Expense</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="recurring-form">
+                        <div class="mb-3">
+                            <label class="form-label">Expense Name</label>
+                            <input type="text" class="form-control" id="recurring-name"
+                                placeholder="e.g. House Rent, Gym Membership" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Category</label>
+                            <select class="form-select" id="recurring-category" required>
+                                <option value="Rent">Rent</option>
+                                <option value="Utilities">Utilities</option>
+                                <option value="Subscriptions">Subscriptions</option>
+                                <option value="Insurance">Insurance</option>
+                                <option value="Gym">Gym/Fitness</option>
+                                <option value="Education">Education</option>
+                                <option value="Transport">Transport</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Amount</label>
+                            <input type="number" class="form-control" id="recurring-amount" placeholder="e.g. 15000"
+                                min="0.01" step="0.01" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Frequency</label>
+                            <select class="form-select" id="recurring-frequency" required>
+                                <option value="Weekly">Weekly</option>
+                                <option value="Monthly" selected>Monthly</option>
+                                <option value="Yearly">Yearly</option>
+                            </select>
+                        </div>
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary">Save Recurring Expense</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+
+    <script src="js/firebase-config.js"></script>
+    <script src="js/common.js"></script>
+    <script src="js/myexpense.js"></script>
+</body>
+
+</html>

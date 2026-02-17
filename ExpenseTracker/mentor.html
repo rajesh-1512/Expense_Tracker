@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SmartPocket - AI Mentor</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/style.css">
+    <!-- Markdown Parser -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <style>
+        /* Specific styles for Mentor Page */
+        .chat-container-full {
+            height: calc(100vh - 180px);
+            /* Fill most of the screen */
+            min-height: 500px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        #ai-chat-window {
+            flex-grow: 1;
+            overflow-y: auto;
+            background-color: #f8f9fa;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.05);
+        }
+
+        .chat-input-area {
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 -5px 20px rgba(0, 0, 0, 0.05);
+        }
+
+        .suggestion-chip {
+            border-radius: 20px;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+
+        .suggestion-chip:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+
+<body class="dashboard-body">
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary shadow-sm glass-header sticky-top">
+        <div class="container">
+            <a class="navbar-brand fw-bold" href="dashboard.html">
+                <i class="fa-solid fa-wallet me-2"></i>SmartPocket
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item"><a class="nav-link" href="dashboard.html">Dashboard</a></li>
+                    <li class="nav-item"><a class="nav-link active" href="mentor.html">AI Mentor</a></li>
+                    <li class="nav-item"><a class="nav-link" href="budget.html">Budgets</a></li>
+                    <li class="nav-item"><a class="nav-link" href="myexpense.html">MyExpense</a></li>
+                    <li class="nav-item"><a class="nav-link" href="analysis.html">Analysis</a></li>
+                    <li class="nav-item"><a class="nav-link" href="settings.html">Settings</a></li>
+                </ul>
+                <div class="d-flex align-items-center">
+                    <span id="user-display-name" class="text-white me-3 fw-medium">User</span>
+                    <button id="logout-btn" class="btn btn-outline-light btn-sm rounded-pill px-3">
+                        <i class="fa-solid fa-sign-out-alt me-1"></i> Logout
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container py-4">
+
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="card border-0 shadow-lg h-100">
+                    <div class="card-header bg-gradient-premium text-white py-3 d-flex align-items-center">
+                        <div class="d-flex justify-content-between w-100 align-items-center">
+                            <div class="d-flex align-items-center">
+                                <div class="icon-circle bg-white text-primary me-3 shadow-sm">
+                                    <i class="fa-solid fa-brain fa-lg"></i>
+                                </div>
+                                <div>
+                                    <h4 class="mb-0 fw-bold">Your Personal Financial Guide</h4>
+                                    <p class="mb-0 small opacity-75">Powered by AI • Analyzes your real data</p>
+                                </div>
+                            </div>
+                            <button class="btn btn-outline-light btn-sm" id="clear-chat-btn">
+                                <i class="fa-solid fa-trash-can me-2"></i>Clear Chat
+                            </button>
+                        </div>
+                    </div>
+                    <div class="card-body bg-light p-0 d-flex flex-column"
+                        style="height: calc(100vh - 200px); min-height: 500px;">
+
+                        <!-- Messages Window -->
+                        <div id="ai-chat-window"
+                            class="flex-grow-1 p-3 m-3 bg-white rounded shadow-inner overflow-auto">
+                            <div class="text-center text-muted my-5">
+                                <div class="mb-3">
+                                    <i class="fa-solid fa-comments-dollar fa-3x text-primary opacity-25"></i>
+                                </div>
+                                <h5>Welcome! I am your AI Finance Mentor.</h5>
+                                <p>I have access to your current spending data.<br>Ask me for analysis, tips, or strict
+                                    budget advice.</p>
+                            </div>
+                        </div>
+
+                        <!-- Suggestions & Input Area -->
+                        <div class="p-3 bg-white border-top">
+                            <!-- Suggestions -->
+                            <div class="d-flex gap-2 mb-3 overflow-auto py-2 px-1" style="scrollbar-width: none;">
+                                <button class="btn btn-outline-primary rounded-pill btn-sm text-nowrap"
+                                    onclick="askAI('Analyze my spending habits based on my data')">
+                                    <i class="fa-solid fa-chart-column me-1"></i> Analyze Habits
+                                </button>
+                                <button class="btn btn-outline-success rounded-pill btn-sm text-nowrap"
+                                    onclick="askAI('Give me specific tips to save money based on my top expense categories')">
+                                    <i class="fa-solid fa-piggy-bank me-1"></i> Smart Tips
+                                </button>
+                                <button class="btn btn-outline-danger rounded-pill btn-sm text-nowrap"
+                                    onclick="askAI('Am I overspending in any category? Be critical.')">
+                                    <i class="fa-solid fa-magnifying-glass-dollar me-1"></i> Spend Audit
+                                </button>
+                                <button class="btn btn-outline-warning rounded-pill btn-sm text-nowrap"
+                                    onclick="askAI('Create a budget plan for next month')">
+                                    <i class="fa-solid fa-calendar-days me-1"></i> Create Plan
+                                </button>
+                            </div>
+
+                            <!-- Input Area -->
+                            <div class="input-group">
+                                <input type="text" id="ai-input" class="form-control border bg-light"
+                                    placeholder="Ask anything about your finances..."
+                                    style="border-radius: 20px 0 0 20px; padding-left: 20px;">
+                                <button class="btn btn-primary px-4" type="button" id="ai-send-btn"
+                                    style="border-radius: 0 20px 20px 0;">
+                                    <i class="fa-solid fa-paper-plane"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Hidden Data for AI Context (Populated by common.js/app.js concepts) -->
+    <!-- We will let ai-mentor.js grab these from similar IDs if we duplicate the hidden spans, OR we update ai-mentor.js to read from localStorage directly which is cleaner. -->
+    <!-- For now, maintaining compatibility with existing ai-mentor.js which looks for DOM elements. -->
+    <div class="d-none">
+        <span id="total-income">0</span>
+        <span id="total-expense">0</span>
+        <span id="balance">0</span>
+    </div>
+
+    <!-- Scripts -->
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+
+    <script src="js/firebase-config.js"></script>
+    <script src="js/config.js"></script>
+    <script src="js/common.js"></script>
+    <script src="js/ai-mentor.js"></script>
+    <!-- Simple inline script to populate hidden stats for the AI to read -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const user = getCurrentUser();
+            if (user) {
+                const key = getDataKey(user.uid);
+                const transactions = JSON.parse(localStorage.getItem(key)) || [];
+                let inc = 0, exp = 0;
+                transactions.forEach(t => {
+                    if (t.type === 'income') inc += parseFloat(t.amount);
+                    if (t.type === 'expense') exp += parseFloat(t.amount);
+                });
+                document.getElementById('total-income').textContent = formatCurrency(inc);
+                document.getElementById('total-expense').textContent = formatCurrency(exp);
+                document.getElementById('balance').textContent = formatCurrency(inc - exp);
+            }
+        });
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>

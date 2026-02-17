@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SmartPocket - Budgets</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body class="dashboard-body">
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary shadow-sm glass-header sticky-top">
+        <div class="container">
+            <a class="navbar-brand fw-bold" href="dashboard.html">
+                <i class="fa-solid fa-wallet me-2"></i>SmartPocket
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item"><a class="nav-link" href="dashboard.html">Dashboard</a></li>
+                    <li class="nav-item"><a class="nav-link" href="mentor.html">AI Mentor</a></li>
+                    <li class="nav-item"><a class="nav-link active" href="budget.html">Budgets</a></li>
+                    <li class="nav-item"><a class="nav-link" href="myexpense.html">MyExpense</a></li>
+                    <li class="nav-item"><a class="nav-link" href="analysis.html">Analysis</a></li>
+                    <li class="nav-item"><a class="nav-link" href="settings.html">Settings</a></li>
+                </ul>
+                <div class="d-flex align-items-center">
+                    <span id="user-display-name" class="text-white me-3 fw-medium">User</span>
+                    <button id="logout-btn" class="btn btn-outline-light btn-sm rounded-pill px-3">
+                        <i class="fa-solid fa-sign-out-alt me-1"></i> Logout
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container py-4">
+        <div class="d-flex justify-content-between align-items-center page-header">
+            <div>
+                <h2 class="page-title mb-0">Smart Budgets</h2>
+                <p class="text-muted mb-0">Set limits and track your progress.</p>
+            </div>
+            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addBudgetModal">
+                <i class="fa-solid fa-plus me-2"></i>Set New Budget
+            </button>
+        </div>
+
+        <!-- Summary Cards Row -->
+        <div class="row mb-4">
+            <div class="col-md-4">
+                <div class="card border-0 shadow-sm h-100 bg-gradient-primary text-white">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h6 class="mb-0 opacity-75">Weekly Budget</h6>
+                            <i class="fa-solid fa-calendar-week opacity-50"></i>
+                        </div>
+                        <h3 class="fw-bold mb-1" id="weekly-limit-display">...</h3>
+                        <small class="opacity-75" id="weekly-status">Set a weekly goal</small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card border-0 shadow-sm h-100 bg-gradient-success text-white">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h6 class="mb-0 opacity-75">Monthly Budget</h6>
+                            <i class="fa-solid fa-calendar-days opacity-50"></i>
+                        </div>
+                        <h3 class="fw-bold mb-1" id="monthly-limit-display">...</h3>
+                        <small class="opacity-75" id="monthly-status">Set a monthly goal</small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card border-0 shadow-sm h-100 bg-gradient-info text-white">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h6 class="mb-0 opacity-75">Yearly Budget</h6>
+                            <i class="fa-solid fa-calendar opacity-50"></i>
+                        </div>
+                        <h3 class="fw-bold mb-1" id="yearly-limit-display">...</h3>
+                        <small class="opacity-75" id="yearly-status">Set a yearly goal</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section Header -->
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h5 class="fw-bold text-secondary"><i class="fa-solid fa-list-check me-2"></i>Active Budgets</h5>
+            <button class="btn btn-outline-danger btn-sm" onclick="clearAllBudgets()">
+                <i class="fa-solid fa-trash-can me-2"></i>Clear All Details
+            </button>
+        </div>
+
+        <!-- Budget List -->
+        <div class="row">
+            <div class="col-12">
+                <div id="budget-list">
+                    <!-- Loaded dynamically -->
+                    <div class="text-center py-5 text-muted">
+                        <i class="fa-solid fa-spinner fa-spin fa-2x mb-3"></i>
+                        <p>Loading Budgets...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Budget Modal -->
+    <div class="modal fade" id="addBudgetModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Set Budget Goal</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="budget-form">
+                        <div class="mb-3">
+                            <label class="form-label">Period</label>
+                            <select class="form-select" id="budget-period">
+                                <option value="Monthly">Monthly</option>
+                                <option value="Weekly">Weekly</option>
+                                <option value="Yearly">Yearly</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Category</label>
+                            <select class="form-select" id="budget-category">
+                                <option value="All">All Expenses</option>
+                                <option value="Food">Food</option>
+                                <option value="Transport">Transport</option>
+                                <option value="Utilities">Utilities</option>
+                                <option value="Entertainment">Entertainment</option>
+                                <option value="Shopping">Shopping</option>
+                                <option value="Health">Health</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Limit Amount</label>
+                            <input type="number" class="form-control" id="budget-limit" placeholder="e.g. 5000"
+                                required>
+                        </div>
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary">Save Budget</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+
+    <script src="js/firebase-config.js"></script>
+    <script src="js/common.js"></script>
+    <script src="js/budget.js"></script>
+</body>
+
+</html>
